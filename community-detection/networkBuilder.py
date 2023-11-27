@@ -9,9 +9,9 @@ from bloc.util import getDictFromJson
 from tqdm import tqdm
 
 bot_dataset_files = [
-    {'src': 'astroturf', 'classes': ['political_Bot']}
-    # {'src': 'botwiki', 'classes': ['bot']},
-    # {'src': 'caverlee', 'classes': ['bot']},
+    # {'src': 'astroturf', 'classes': ['political_Bot']},
+    {'src': 'botwiki', 'classes': ['bot']}
+    # {'src': 'caverlee', 'classes': ['bot']}
     # {'src': 'cresci-17', 'classes': ['bot-socialspam', 'bot-traditionspam', 'bot-fakefollower']},
     # {'src': 'gilani-17', 'classes': ['bot']},
     # {'src': 'gregory_purchased', 'classes': ['bot']},
@@ -23,17 +23,18 @@ bot_dataset_files = [
     # {'src': 'varol-icwsm', 'classes': ['bot']}
 ]
 
-# human_dataset_files = [
-#     {'src': 'caverlee', 'classes': ['human']},
-#     {'src': 'cresci-17', 'classes': ['human']},
-#     {'src': 'gilani-17', 'classes': ['human']},
-#     {'src': 'kevin_feedback', 'classes': ['human']},
-#     {'src': 'rtbust', 'classes': ['human']},
-#     {'src': 'stock', 'classes': ['human']},
-#     {'src': 'varol-icwsm', 'classes': ['human']},
-#     {'src': 'verified', 'classes': ['human']},
-#     {'src': 'zoher-organization', 'classes': ['human', 'organization']}
-# ]
+human_dataset_files = [
+    {'src': 'caverlee', 'classes': ['human']},
+    {'src': 'cresci-17', 'classes': ['human']},
+    {'src': 'gilani-17', 'classes': ['human']},
+    {'src': 'kevin_feedback', 'classes': ['human']},
+    {'src': 'rtbust', 'classes': ['human']},
+    {'src': 'stock', 'classes': ['human']},
+    {'src': 'varol-icwsm', 'classes': ['human']},
+    {'src': 'verified', 'classes': ['human']},
+    {'src': 'midterm-2018', 'classes': ['human']},
+    {'src': 'zoher-organization', 'classes': ['human', 'organization']}
+]
 
 
 def get_user_id_class_map(file_path):
@@ -76,7 +77,7 @@ gen_bloc_params, gen_bloc_args = get_bloc_params([], '',
                                                  tweet_order='noop')
 
 bot_result_file = 'results/pairwise_sim_report_bot.json'
-human_result_file = 'results/pairwise_sim_report_human.json'
+# human_result_file = 'results/pairwise_sim_report_human.json'
 
 process_dataset(bot_dataset_files, bot_result_file)
 # process_dataset(human_dataset_files, human_result_file)

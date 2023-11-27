@@ -10,19 +10,20 @@ from bloc.util import getDictFromJson
 from bloc.util import get_bloc_params
 
 bot_dataset_files = [
-    # {'src': 'astroturf', 'classes': ['political_Bot']},
-    # {'src': 'botwiki', 'classes': ['bot']},
-    # {'src': 'caverlee', 'classes': ['human', 'bot']},
-    {'src': 'cresci-17', 'classes': ['human', 'bot-socialspam', 'bot-traditionspam', 'bot-fakefollower']}
+    {'src': 'astroturf', 'classes': ['political_Bot']}, #political_Bot
+    {'src': 'botwiki', 'classes': ['bot']}, #selfidentified_Bot
+    {'src': 'caverlee', 'classes': ['human', 'bot']}, #content_polluters, #Legit_human
+    {'src': 'cresci-17', 'classes': ['human', 'bot-socialspam', 'bot-traditionspam', 'bot-fakefollower']},
     # {'src': 'gilani-17', 'classes': ['human', 'bot']},
-    # {'src': 'gregory_purchased', 'classes': ['bot']},
-    # {'src': 'josh_political', 'classes': ['bot']},
+    {'src': 'gregory_purchased', 'classes': ['bot']}, #bot-fakefollower
+    {'src': 'josh_political', 'classes': ['bot']}, #political_Bot
+    {'src': 'midterm-2018', 'classes': ['human']}, #political_account
     # {'src': 'kevin_feedback', 'classes': ['human', 'bot']},
-    # {'src': 'pronbots', 'classes': ['bot']},
+    {'src': 'pronbots', 'classes': ['bot']}, #adult_Content_Scam
     # {'src': 'rtbust', 'classes': ['human', 'bot']},
-    # {'src': 'stock', 'classes': ['human', 'bot']},
+    {'src': 'stock', 'classes': ['human', 'bot']}, #financial_bot, #financial_account
     # {'src': 'varol-icwsm', 'classes': ['bot', 'human']},
-    # {'src': 'verified', 'classes': ['human']},
+    {'src': 'verified', 'classes': ['human']} #verified_account
     # {'src': 'zoher-organization', 'classes': ['human', 'organization']}
 ]
 
@@ -45,7 +46,6 @@ def bloc_doc(u_bloc, bloc_model, user_id_class):
     doc = [u_bloc['bloc'][dim] for dim in bloc_model['bloc_alphabets'] if dim in u_bloc['bloc']]
     doc = ''.join(doc)
     doc = doc.strip()
-    print(doc)
     return {
         'text': doc,
         'user_id': u_bloc['user_id'],
@@ -83,7 +83,30 @@ for file in bot_dataset_files:
             if user_id_class_map.get(line[0], '') in file['classes']:
                 tweets = getDictFromJson(line[1])
                 u_bloc = add_bloc_sequences(tweets, all_bloc_symbols=all_bloc_symbols, **gen_bloc_params)
-                bloc_doc_lst.append(bloc_doc(u_bloc, bloc_model, user_id_class_map.get(line[0], '')))
+                user_class = user_id_class_map.get(line[0], '')
+                if file['src'] == 'botwiki':
+                    user_class = 'selfidentified_Bot'
+                elif file['src'] == 'caverlee' and user_id_class_map.get(line[0], '') == 'bot':
+                    user_class = 'content_polluters'
+                elif file['src'] == 'caverlee' and user_id_class_map.get(line[0], '') == 'human':
+                    user_class = 'legit_human'
+                elif file['src'] == 'cresci-17' and user_id_class_map.get(line[0], '') == 'human':
+                    user_class = 'legit_human'
+                elif file['src'] == 'gregory_purchased':
+                    user_class = 'bot-fakefollower'
+                elif file['src'] == 'josh_political':
+                    user_class = 'political_Bot'
+                elif file['src'] == 'midterm-2018':
+                    user_class = 'political_account'
+                elif file['src'] == 'pronbots':
+                    user_class = 'adult_Content_Scam'
+                elif file['src'] == 'stock' and user_id_class_map.get(line[0], '') == 'bot':
+                    user_class = 'financial_bot'
+                elif file['src'] == 'stock' and user_id_class_map.get(line[0], '') == 'human':
+                    user_class = 'financial_account'
+                elif file['src'] == 'verified':
+                    user_class = 'verified_account'
+                bloc_doc_lst.append(bloc_doc(u_bloc, bloc_model, user_class))
 
 tf_matrix = get_bloc_variant_tf_matrix(bloc_doc_lst,
                                        tf_matrix_norm=bloc_model['tf_matrix_norm'],
